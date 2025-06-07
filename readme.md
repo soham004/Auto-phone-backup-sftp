@@ -34,7 +34,7 @@
   ```
 - Find your phone's IP address:
   ```sh
-  ip a
+  ifconfig
   ```
   (Look for your Wi-Fi IP, e.g., `192.168.1.100`)
 
@@ -78,11 +78,10 @@
 - In the project root, create a file named `creds.json`:
   ```json
   {
-      "username": "soham",
-      "password": "yourpassword"
+      "username": "anyname"
   }
   ```
-  > **Note:** If you use SSH key authentication, the password is not required but can be left for compatibility.
+  > **Note:** The username actually didn't matter during testing on an android device with termux. But it's still there because the script can be used to backup files from remote devices too.
 
 ---
 
@@ -104,6 +103,13 @@
    - For large backups, ensure your phone stays awake and connected to Wi-Fi.
    - You can re-run the script anytime; only new or changed files will be copied.
 
+---
+
+## Note on SFTP Support
+
+> **SFTP is not supported in this project due to slow transfer speeds on Android devices.**
+>
+> All backup and file detection operations are performed using `rsync` over SSH for maximum speed and reliability.
 ---
 
 ## License
