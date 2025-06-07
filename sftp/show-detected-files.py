@@ -2,12 +2,15 @@ import os
 import stat
 import paramiko
 import time
+import json
 
-# ===== CONFIGURATION =====
+with open('creds.json', 'r') as f:
+    config = json.load(f)
+
 HOST = '192.168.0.100'
 PORT = 8022
-USERNAME = ''
-PASSWORD = ''
+USERNAME = config.get('username', '')
+PASSWORD = config.get('password', '')
 REMOTE_ROOT = '/storage/emulated/0'
 EXTENSIONS = [
     # Images
@@ -15,7 +18,6 @@ EXTENSIONS = [
     # Videos
     '.mp4', '.mkv', '.avi', '.mov', '.wmv', '.flv', '.webm', '.mpeg', '.mpg', '.3gp', '.m4v', '.ts'
 ]
-# ==========================
 
 def connect_sftp():
     transport = paramiko.Transport((HOST, PORT))
