@@ -1,10 +1,11 @@
 import os
 import stat
 import paramiko
+import time
 
 # ===== CONFIGURATION =====
-HOST = '192.168.119.244'
-PORT = 22
+HOST = '192.168.0.100'
+PORT = 8022
 USERNAME = ''
 PASSWORD = ''
 REMOTE_ROOT = '/storage/emulated/0'
@@ -21,7 +22,9 @@ def connect_sftp():
     transport.connect(username=USERNAME, password=PASSWORD)
     return paramiko.SFTPClient.from_transport(transport)
 
-def list_tree(sftp, remote_dir, prefix=""):
+def list_tree(sftp, remote_dir, prefix="", file_counter=None):
+    if file_counter is None:
+        file_counter = [0]
     try:
         items = sftp.listdir_attr(remote_dir)
     except Exception as e:
@@ -35,6 +38,7 @@ def list_tree(sftp, remote_dir, prefix=""):
         else:
             if any(item.filename.lower().endswith(ext) for ext in EXTENSIONS):
                 files.append(item)
+                file_counter[0] += 1
 
     # Recursively check subfolders
     folder_results = []
@@ -42,7 +46,7 @@ def list_tree(sftp, remote_dir, prefix=""):
         is_last = idx == len(folders) - 1 and not files
         sub_prefix = prefix + ("└── " if is_last else "├── ")
         sub_indent = prefix + ("    " if is_last else "│   ")
-        has_files = list_tree(sftp, f"{remote_dir}/{folder.filename}", sub_indent)
+        has_files = list_tree(sftp, f"{remote_dir}/{folder.filename}", sub_indent, file_counter)
         folder_results.append((folder, sub_prefix, has_files))
 
     # Only print if this folder or any subfolder has files
@@ -61,7 +65,12 @@ def main():
     print("Connecting to phone via SFTP...")
     sftp = connect_sftp()
     print("Listing files with extension(s):", EXTENSIONS)
-    list_tree(sftp, REMOTE_ROOT)
+    file_counter = [0]
+    start_time = time.time()
+    list_tree(sftp, REMOTE_ROOT, file_counter=file_counter)
+    print(f"\nTotal files detected: {file_counter[0]}")
+    end_time = time.time()
+    print(f"Time taken: {end_time - start_time:.2f} seconds")
     if sftp is not None:
         sftp.close()
 
