@@ -44,15 +44,15 @@
   ```sh
   ssh-keygen
   ```
-- Copy your public key to your phone (replace `8022` and `soham` with your port and username if different):
+- Copy your public key to your phone (replace `8022` and `user` with your port and username if different):
   ```sh
-  ssh-copy-id -p 8022 soham@192.168.1.100
+  ssh-copy-id -p 8022 user@192.168.1.100
   ```
   If `ssh-copy-id` is not available, manually append the contents of your `~/.ssh/id_rsa.pub` to `~/.ssh/authorized_keys` on your phone.
 
 - Test passwordless SSH:
   ```sh
-  ssh -p 8022 soham@192.168.1.100
+  ssh -p 8022 user@192.168.1.100
   ```
   You should be logged in without a password prompt.
 
